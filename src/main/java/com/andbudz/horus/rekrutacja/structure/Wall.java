@@ -6,13 +6,18 @@ import java.util.Optional;
 
 public class Wall implements Structure {
     private List<Block> blocks;
+    public Wall(List<Block> blocks) {
+        this.blocks = blocks;
+    }
+
+    public Wall() {
+    }
 
     @Override
     public Optional<Block> findBlockByColor(String color) {
         List<Block> blocksWithAllCompositeBlocksElements = getBlocksWithAllCompositeBlocks(blocks);
-        while (blocksWithAllCompositeBlocksElements.iterator().hasNext()) {
-            Block block = blocksWithAllCompositeBlocksElements.iterator().next();
-            if (block.getColor().equals(color)) {
+        for (Block block : blocksWithAllCompositeBlocksElements) {
+            if (block.getColor().equalsIgnoreCase(color)) {
                 return Optional.of(block);
             }
         }
@@ -23,9 +28,8 @@ public class Wall implements Structure {
     public List<Block> findBlocksByMaterial(String material) {
         List<Block> blocksByMaterial = new ArrayList<>();
         List<Block> blocksWithAllCompositeBlocksElements = getBlocksWithAllCompositeBlocks(blocks);
-        while (blocksWithAllCompositeBlocksElements.iterator().hasNext()) {
-            Block block = blocksWithAllCompositeBlocksElements.iterator().next();
-            if (block.getMaterial().equals(material)) {
+        for (Block block : blocksWithAllCompositeBlocksElements) {
+            if (block.getMaterial().equalsIgnoreCase(material)) {
                 blocksByMaterial.add(block);
             }
         }
@@ -35,6 +39,9 @@ public class Wall implements Structure {
     @Override
     public int count() {
         int i = 0;
+        if (blocks==null){
+            return i;
+        }
         for (Block block : blocks) {
             if (isCompositeBlock(block)) {
                 i += ((CompositeBlock) block).getBlocks().size();
@@ -47,10 +54,14 @@ public class Wall implements Structure {
 
     private List<Block> getBlocksWithAllCompositeBlocks(List<Block> blocks) {
         List<Block> blocksWithAllCompositeBlocksElements = new ArrayList<>();
-        while (blocks.iterator().hasNext()) {
-            Block block = blocks.iterator().next();
+        if(blocks==null){
+            return blocksWithAllCompositeBlocksElements;
+        }
+        for (Block block:blocks) {
             if (isCompositeBlock(block)) {
                 blocksWithAllCompositeBlocksElements.addAll(((CompositeBlock) block).getBlocks());
+            } else {
+                blocksWithAllCompositeBlocksElements.add(block);
             }
         }
         return blocksWithAllCompositeBlocksElements;
